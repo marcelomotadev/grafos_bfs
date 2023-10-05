@@ -16,7 +16,7 @@ def bfs(lista_vizinhos, vertice_inicial):
                 visitados.add(vizinho)
 
 # Vértice inicial para começar a busca
-vertice_inicial = 'B'
+vertice_inicial = 'A'
 
 lista_vizinhos = { 
   'A': ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], 
