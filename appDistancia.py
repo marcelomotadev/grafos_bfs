@@ -1,22 +1,27 @@
 from collections import deque
 
-def bfs(lista_vizinhos, vertice_inicial):
+def bfs_com_distancia(lista_vizinhos, vertice_inicial, vertice_destino):
     visitados = set()
     fila = deque()
-    fila.append(vertice_inicial)
+    fila.append((vertice_inicial, 0))  # Tupla (vértice, distância)
     visitados.add(vertice_inicial)
 
     while fila:
-        vertice_atual = fila.popleft()
-        print(vertice_atual, end=' ')  # Você pode fazer qualquer ação desejada com o vértice aqui
+        vertice_atual, distancia_atual = fila.popleft()
+        if vertice_atual == vertice_destino:
+            return distancia_atual  # Se o vértice de destino for encontrado, retorne a distância
 
         for vizinho in lista_vizinhos.get(vertice_atual, []):
             if vizinho not in visitados:
-                fila.append(vizinho)
+                fila.append((vizinho, distancia_atual + 1))
                 visitados.add(vizinho)
 
-# Vértice inicial para começar a busca
-vertice_inicial = 'B'
+    # Se o vértice de destino não for alcançado, retorne -1 ou outro valor adequado
+    return -1
+
+# Vértices de origem e destino
+vertice_origem = 'A'
+vertice_destino = 'T'
 
 lista_vizinhos = { 
   'A': ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], 
@@ -47,6 +52,10 @@ lista_vizinhos = {
   'Z': ['W', 'Y']
 }
 
-# Aplicar o algoritmo BFS
-print("Resultado da busca em largura a partir de", vertice_inicial, ":")
-bfs(lista_vizinhos, vertice_inicial)
+# Encontre a distância entre os vértices
+distancia = bfs_com_distancia(lista_vizinhos, vertice_origem, vertice_destino)
+
+if distancia != -1:
+    print(f"A distância entre {vertice_origem} e {vertice_destino} é {distancia}.")
+else:
+    print(f"Não há caminho entre {vertice_origem} e {vertice_destino}.")
