@@ -1,4 +1,5 @@
 from collections import deque
+from Graph import Graph
 
 def bfs_com_caminho(lista_vizinhos, vertice_inicial, vertice_destino):
     visitados = set()
@@ -20,47 +21,50 @@ def bfs_com_caminho(lista_vizinhos, vertice_inicial, vertice_destino):
     # Se o vértice de destino não for alcançado, retorne -1 ou outro valor adequado
     return -1
 
-# Vértices de origem e destino
-vertice_origem = 'N'
-vertice_destino = 'O'
+def connect_vertices(graph, edge_dict):
+  for vertices in edge_dict.values():
+    for i in range(len(vertices)):
+      for j in range(i + 1, len(vertices)):
+        v = vertices[i]
+        w = vertices[j]
+        graph.add_edge(v, w)
 
-lista_vizinhos = { 
-  'A': ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], 
-  'B': ['A', 'G', 'H'],
-  'C': ['A', 'I', 'N'], 
-  'D': ['A', 'I', 'N', 'L'], 
-  'E': ['A', 'F'], 
-  'F': ['A', 'E', 'J'], 
-  'G': ['A', 'B', 'I', 'J', 'K'], 
-  'H': ['A', 'B', 'I'], 
-  'I': ['A', 'C', 'D', 'H', 'G', 'R', 'Q'], 
-  'J': ['G', 'F'], 
-  'K': ['G', 'P', 'Q', 'O'], 
-  'L': ['D', 'M'], 
-  'M': ['L', 'N'], 
-  'N': ['D', 'M', 'S'], 
-  'O': ['K'], 
-  'P': ['K', 'U'], 
-  'Q': ['K', 'U', 'I'], 
-  'R': ['I', 'S', 'V', 'U'], 
-  'S': ['R', 'T', 'N'], 
-  'T': ['S'], 
-  'U': ['R', 'Q', 'P', 'W'], 
-  'V': ['R', 'W'], 
-  'W': ['V', 'U', 'X', 'Z', 'Y'], 
-  'X': ['W', 'Y'], 
-  'Y': ['X', 'Z', 'W'], 
-  'Z': ['W', 'Y']
-}
+if __name__ == '__main__':
+    file = 'db.txt'
 
-# Encontre a distância entre os vértices
-distancia = bfs_com_caminho(lista_vizinhos, vertice_origem, vertice_destino)
+    edge_dict = {}
 
-def caminho(lista):
-    resultado = ' > '.join(lista)
-    return resultado
+    with open(file, 'r') as file:
+        content = file.read().splitlines()
+        
+    for line in content:
+        left, right = map(str, line.split())
+        
+        if right not in edge_dict:
+            edge_dict[right] = []
+        edge_dict[right].append(left)
 
-if distancia != -1:
-    print(f"A distância entre {vertice_origem} e {vertice_destino} é: {len(distancia) - 1} e o caminho é: {caminho(distancia)}.")
-else:
-    print(f"Não há caminho entre {vertice_origem} e {vertice_destino}.")
+    graph = Graph()
+    
+    connect_vertices(graph, edge_dict)
+    
+    vertice_origem = 'N'
+    vertice_destino = 'O'
+    
+    distancia = bfs_com_caminho(graph.adj_list, vertice_origem, vertice_destino)
+    
+    def caminho(lista):
+        resultado = ' > '.join(lista)
+        return resultado
+
+    if distancia != -1:
+        print(f"A distância entre {vertice_origem} e {vertice_destino} é: {len(distancia) - 1} e o caminho é: {caminho(distancia)}.")
+    else:
+        print(f"Não há caminho entre {vertice_origem} e {vertice_destino}.")
+        
+    print(f'Número de pesquisadores: {graph.num_vertices()}.')
+    print(f'Número de colaborações: {graph.num_edges()}.')
+    print(f'{graph.get_max_degree()[0]} foi/foram pesquisador que mais colaborou com {graph.get_max_degree()[1]} colaborações.')
+    print(f'{graph.get_min_degree()[0]} foi/foram pesquisador que menos colaborou com {graph.get_min_degree()[1]} colaborações.')
+    print(f'Número de subredes de colaboração: {graph.components()}.')
+    
